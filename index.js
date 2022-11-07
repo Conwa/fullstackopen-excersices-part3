@@ -1,5 +1,7 @@
+const { request, response } = require("express");
 const express = require("express");
 const app = express();
+app.use(express.json());
 
 const persons = [
   {
@@ -25,15 +27,25 @@ const persons = [
 ];
 
 /*METODOS*/
-app.use(express.json());
 
 app.get("/", (request, response) => {
-  console.log(response);
   response.send("<h1>Hello World!</h1>");
 });
 
 app.get("/api/persons", (request, response) => {
   response.json(persons);
+});
+
+app.get("/api/info", (request, response) => {
+  const persons = 100;
+  const date = new Date();
+  response.send(
+    `  <div>
+      <h2>Phonebook has info for ${persons} people</h2>
+      <h2>${date}</h2>
+    </div>`
+  );
+  response.send(`<h2>Phonebook has info for ${persons} people</h2>`);
 });
 
 app.get("/api/notes/:id", (request, response) => {
