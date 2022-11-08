@@ -1,7 +1,8 @@
 const { request, response } = require("express");
 const express = require("express");
+const { token } = require("morgan");
 const app = express();
-app.use(express.json());
+var morgan = require("morgan");
 
 let phonebook = [
   {
@@ -27,6 +28,13 @@ let phonebook = [
 ];
 
 /*METODOS*/
+
+/*json.parser and morgan console-logging*/
+app.use(express.json());
+morgan.token("body", (req, res) => JSON.stringify(req.body));
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+);
 
 /*first method*/
 app.get("/", (request, response) => {
@@ -76,8 +84,6 @@ const generateId = () => {
 };
 app.post("/api/persons", (request, response) => {
   const body = request.body;
-  console.log(body);
-
   if (!body.name) {
     return response.status(400).json({ error: "name missing" });
   }
@@ -101,6 +107,13 @@ app.post("/api/persons", (request, response) => {
 
   response.json(phonebook);
 });
+
+/*unknown route*/
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
 
 const PORT = 3001;
 app.listen(PORT, () => {
